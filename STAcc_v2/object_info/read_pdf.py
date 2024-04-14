@@ -2,17 +2,21 @@ from PyPDF2 import PdfReader
 import re
 
 class StarTracker():
-    def __init__(self, datasheet):
+    def __init__(self, datasheet=None):
+        try:
+            assert (type(datasheet) == str) | (datasheet == None), "Input the filepath to your datasheet; must be a string."
+            self.datasheet = datasheet
+        except AssertionError as msg:
+            print(msg)
         #try:
-        self.datasheet = datasheet
-        #except: TypeError as msg
-        #print(msg)
+            # check if path to file exists
+            #self.datasheet = 
 
-    def extract_text_from_pdf(self, datasheet):
+    def extract_text_from_pdf(self):
         '''
         TODO: write docstring
         '''
-        reader = PdfReader(datasheet)
+        reader = PdfReader(self.datasheet)
         number_of_pages = len(reader.pages)
 
         pdf_text = ""
@@ -25,8 +29,7 @@ class StarTracker():
         self.datasheet_text = pdf_text
 
         return self.datasheet_text
-
-
+    
     def find_word_in_text(self, word, num_characters=15):
         '''
         Find occurrences of a word in a text, then return the word and a defined number of characters 
@@ -53,14 +56,13 @@ class StarTracker():
             end_index = start_index + num_characters  # num_characters defines how many characters after the word it will look through/present to user
             possible_info = text[start_index-len(word):end_index]  # prints the word you're looking for and the characters after it
             info_set.append(possible_info)  # adds this result to a list
-            
+                
             index = end_index  # starts looking after the string it just printed
 
         self.info_set = info_set
 
         return self.info_set
-
-
+    
     def input_boolean_converter(self, prompt_message):
         '''
         TODO: docstring
@@ -86,16 +88,16 @@ class StarTracker():
         for value in self.info_set:
             
             print(value)
-            user_input = input_boolean_converter("Does this text look like it contains the proper information for a certain parameter?")
+            user_input = self.input_boolean_converter(f'Does this text look like it contains the proper information for a certain parameter? : {value}')
             
             if user_input:  # user_input is True if user entered yes
                 float_pattern = r'[-+]?\d*\.\d+|\d+'  # This pattern identifies both integer and floating-point numbers
                 float_values = re.findall(float_pattern, value)
                 
                 if float_values:
-                    float_number = float(float_values[0])  # Convert the first matched value to a float
+                #    float_number = float(float_values[0])  # Convert the first matched value to a float
                     
-                    return float_number  # Return the extracted float number
+                    return float_values  # Return the extracted float number
                     
         return "No value was found. Try inputting your specifications manually."
 
@@ -113,7 +115,7 @@ class StarTracker():
             self.fov: field of view of star tracker (in arcseconds)
         '''
         if self.datasheet:
-            self.extract_text_from_pdf(self.datasheet)
+            self.extract_text_from_pdf()
 
             self.find_word_in_text(word="aperture")
             if self.info_set == []:
@@ -154,4 +156,3 @@ class StarTracker():
             self.aperture, self.fov = values
 
         return self.aperture, self.fov
-

@@ -1,3 +1,3 @@
-from .readpdf import *
+from .read_pdf import *
 from .input_info import *
-from .RSA_creator import *
+from .RSO_creator import *
