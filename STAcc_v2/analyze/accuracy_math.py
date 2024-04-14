@@ -1,3 +1,3 @@
 def calculate_NEA():
-    NEA = 
-    return 
+    NEA = 1
+    return NEA
