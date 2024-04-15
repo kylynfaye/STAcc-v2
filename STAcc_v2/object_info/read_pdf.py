@@ -99,7 +99,7 @@ class StarTracker():
                     
                     return float_values  # Return the extracted float number
                     
-        return "No value was found. Try inputting your specifications manually."
+        return "No value can be found. Try inputting your specifications manually."
 
 
     def set_parameter_values(self):
@@ -111,19 +111,19 @@ class StarTracker():
             self
             
         Returns: tuple of valid parameter values (integer or floats)
-            self.aperture: aperture size of star tracker (in [units])
+            self.accuracy: accuracy of star tracker (in [units])
             self.fov: field of view of star tracker (in arcseconds)
         '''
         if self.datasheet:
             self.extract_text_from_pdf()
 
-            self.find_word_in_text(word="aperture")
+            self.find_word_in_text(word="accuracy")
             if self.info_set == []:
-                self.find_word_in_text(word="Aperture")
+                self.find_word_in_text(word="Accuracy")
                 if self.info_set == []:
-                    print("Aperture size could not be found in the provided text. Proofread the pdf to ensure it has the aperture information. If not, upload a new pdf. If it does, please input manually.")
+                    print("Accuracy could not be found in the provided text. Proofread the pdf to ensure it has the aperture information. If not, upload a new pdf. If it does, please input manually.")
             
-            self.aperture = self.parameter_value()
+            self.accuracy = self.parameter_value()
             
             self.find_word_in_text(word="field of view")
             if self.info_set == []:
@@ -135,7 +135,7 @@ class StarTracker():
 
 # is this how to do this without pdf??
         if self.datasheet == None:
-            prompt_messages = ["Input the aperture of your startracker in [units]:", "Input the field of view of your startracker in arcseconds"]
+            prompt_messages = ["Input the accuracy of your startracker in [units]:", "Input the field of view of your startracker in arcseconds"]
             values = []
             
             for prompt in prompt_messages:
@@ -153,6 +153,6 @@ class StarTracker():
                     except ValueError:
                         print("Please enter an integer or float for the value of this parameter, in the units requested.")
             
-            self.aperture, self.fov = values
+            self.accuracy, self.fov = values
 
-        return self.aperture, self.fov
+        return self.accuracy, self.fov
