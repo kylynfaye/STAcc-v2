@@ -10,7 +10,7 @@ import math as m
 #######################
 from spacetrack import SpaceTrackClient
 
-def download_tle(username='kylyn.smith@yale.edu', password='kFs29ceil80*!*!', norad_cat_id=[25544, 41335]):
+def download_tle(username='kylyn.smith@yale.edu', password='password', norad_cat_id=[25544, 41335]):
     '''
     Uses spacetrack package to query orbit information about any satellite from space-track.org database
     Downloads TLE as .txt file named 'tle.txt' to working directory
