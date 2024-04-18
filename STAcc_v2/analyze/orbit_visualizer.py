@@ -5,6 +5,8 @@ from mpl_toolkits.mplot3d import Axes3D
 import datetime as dt
 import math as m
 
+from ..object_info.RSO import RSO
+
 def cone_plotter(ax, radius=50, height=750, tip_position=(0,0,7000), azim=45, elev=20):
     '''
     TODO: include variables for thetap, psi, phi for rotations when implementing that
@@ -27,8 +29,6 @@ def cone_plotter(ax, radius=50, height=750, tip_position=(0,0,7000), azim=45, el
     ax.view_init(azim=azim, elev=elev)
 
     return ax
-
-from 
 
 def show_plot():
     '''

@@ -27,8 +27,10 @@ class RSO:
         processed_tle = []
         for i in unprocessed_tle:
             processed_tle.append(i+"\n")
+            
+        self.processed_tle = processed_tle
 
-        return processed_tle
+        return self.processed_tle
         #In future edits, this function will be expanded to allow for users to edit
         #not only the star tracker's specs but the chosen RSO's too.
         #######################

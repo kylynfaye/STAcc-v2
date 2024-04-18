@@ -1,7 +1,7 @@
 from PyPDF2 import PdfReader
 import re
 
-class StarTracker():
+class StarTracker:
     def __init__(self, datasheet=None):
         try:
             assert (type(datasheet) == str) | (datasheet == None), "Input the filepath to your datasheet; must be a string."

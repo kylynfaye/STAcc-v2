@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ####################################
-from STAcc_v2.object_info.read_pdf import StarTracker
+from STAcc_v2.STAcc_v2.object_info.StarTracker import StarTracker
+from STAcc_v2.STAcc_v2.object_info.RSO import RSO
 from STAcc_v2.analyze.orbit_visualizer import *
 ####################################
 
@@ -12,11 +13,10 @@ from STAcc_v2.analyze.orbit_visualizer import *
 
 st.title("STAcc_v2 Attempt")
 
-
 # @st.cache_data  # caches the result of the function below, not having to read in the data every time it reloads
 if st.checkbox("Upload Stuff"):
 
-    datasheet = st.file_uploader('Upload the datasheet to your chosen commercial star tracker here:', type='pdf', accept_multiple_files=False, label_visibility="visible")
+    datasheet = st.file_uploader('Upload the datasheet to your chosen commercial star tracker here, or use the default.', type='pdf', accept_multiple_files=False, label_visibility="visible")
    
     STckr = StarTracker(datasheet="startracker1_datasheet.pdf")
     STckr.extract_text_from_pdf()
