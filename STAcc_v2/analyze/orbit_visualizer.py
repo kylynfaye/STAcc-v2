@@ -29,15 +29,3 @@ def cone_plotter(ax, radius=50, height=750, tip_position=(0,0,7000), azim=45, el
     ax.view_init(azim=azim, elev=elev)
 
     return ax
-
-def show_plot():
-    '''
-    Function to plot everything at once,
-    takes any optional args or uses the functions' respective defaults
-    '''
-    fig = plt.figure(figsize=(7,7))
-    ax = fig.add_subplot(111,projection='3d')
-    ax = orbit_plotter(ax, filepath='tle.txt')
-    cone_plotter(ax, radius=50, height=750, tip_position=(0,0,7000), azim=45, elev=20)
-
-    plt.show()

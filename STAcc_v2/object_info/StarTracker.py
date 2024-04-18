@@ -64,19 +64,19 @@ class StarTracker:
 
         return self.info_set
     
-    def input_boolean_converter(self, prompt_message):
-        '''
-        TODO: docstring
-        '''
-        while True:
-            user_input = st.text_input(prompt_message).strip().lower()  # get user's input from prompt message
+    # def input_boolean_converter(self, prompt_message):
+    #     '''
+    #     TODO: docstring
+    #     '''
+    #     while True:
+    #         user_input = st.text_input(prompt_message).strip().lower()  # get user's input from prompt message
             
-            if user_input == 'yes':
-                return True
-            elif user_input == 'no':
-                return False
-            else:
-                st.write("Please enter 'yes' or 'no'.")
+    #         if user_input == 'yes':
+    #             return True
+    #         elif user_input == 'no':
+    #             return False
+    #         else:
+    #             st.write("Please enter 'yes' or 'no'.")
 
     def parameter_value(self):
         '''
@@ -84,9 +84,8 @@ class StarTracker:
         '''
         for value in self.info_set:
             
-            user_input = self.input_boolean_converter(f'Does this text look like it contains the proper information for a certain parameter? : {value}')
-            
-            if user_input:  # user_input is True if user entered yes
+            st.write(f'Does this text look like it contains the proper information for a certain parameter? : {value}')
+            if st.button('Yes'):  # True if presses yes button
                 float_pattern = r'[-+]?\d*\.\d+|\d+'  # This pattern identifies both integer and floating-point numbers
                 float_values = re.findall(float_pattern, value)
                 
@@ -94,8 +93,8 @@ class StarTracker:
                 #    float_number = float(float_values[0])  # Convert the first matched value to a float
                     
                     return float_values  # Return the extracted float number
-                    
-        return "No value can be found. Try inputting your specifications manually."
+            if st.button('No'):   
+                return st.write("No value can be found. Try inputting your specifications manually.")
 
 
     def set_parameter_values(self):
@@ -113,17 +112,17 @@ class StarTracker:
         if self.datasheet:
             self.extract_text_from_pdf()
 
-            self.find_word_in_text(word="accuracy")
-            if self.info_set == []:
-                self.find_word_in_text(word="Accuracy")
-                if self.info_set == []:
-                    st.write("Accuracy could not be found in the provided text. Proofread the pdf to ensure it has the aperture information. If not, upload a new pdf. If it does, please input manually.")
+            # self.find_word_in_text(word="Accuracy")
+            # if self.info_set == []:
+            #     self.find_word_in_text(word="accuracy")
+            #     if self.info_set == []:
+            #         st.write("Accuracy could not be found in the provided text. Proofread the pdf to ensure it has the aperture information. If not, upload a new pdf. If it does, please input manually.")
             
-            self.accuracy = self.parameter_value()
+            # self.accuracy = self.parameter_value()
             
-            self.find_word_in_text(word="field of view")
+            self.find_word_in_text(word="Field of View")
             if self.info_set == []:
-                self.find_word_in_text(word="Field of View")
+                self.find_word_in_text(word="field of view")
                 if self.info_set == []:
                     st.write("Field of view could not be found in the provided text. Proofread the pdf to ensure it has the field of view information. If not, upload a new pdf. If it does, please input manually.")
             
@@ -131,7 +130,8 @@ class StarTracker:
 
 # is this how to do this without pdf??
         if self.datasheet == None:
-            prompt_messages = ["Input the accuracy of your startracker in [units]:", "Input the field of view of your startracker in arcseconds"]
+            #prompt_messages = ["Input the accuracy of your startracker in [units]:", "Input the field of view of your startracker in arcseconds"]
+            prompt_messages = ["Input the field of view of your startracker in arcseconds:"]
             values = []
             
             for prompt in prompt_messages:
@@ -149,6 +149,7 @@ class StarTracker:
                     except ValueError:
                         st.write("Please enter an integer or float for the value of this parameter, in the units requested.")
             
-            self.accuracy, self.fov = values
-
-        return self.accuracy, self.fov
+            #self.accuracy, self.fov = values
+        #return self.accuracy, self.fov
+            self.fov = values
+        return self.fov
