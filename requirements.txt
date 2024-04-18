@@ -2,5 +2,7 @@ streamlit
 numpy
 matplotlib
 PyPDF2
-astropy
 spacetrack
+mpl_toolkits
+datetime
+math
