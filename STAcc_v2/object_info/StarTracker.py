@@ -1,13 +1,14 @@
 from PyPDF2 import PdfReader
 import re
+import streamlit as st
 
 class StarTracker:
-    def __init__(self, datasheet=None):
+    def __init__(self, datasheet='startracker1_datasheet.pdf'):
         try:
             assert (type(datasheet) == str) | (datasheet == None), "Input the filepath to your datasheet; must be a string."
             self.datasheet = datasheet
         except AssertionError as msg:
-            print(msg)
+            st.write(msg)
         #try:
             # check if path to file exists
             #self.datasheet = 
@@ -57,7 +58,7 @@ class StarTracker:
             possible_info = text[start_index-len(word):end_index]  # prints the word you're looking for and the characters after it
             info_set.append(possible_info)  # adds this result to a list
                 
-            index = end_index  # starts looking after the string it just printed
+            index = end_index  # restarts seraching through the characters following the string it just printed
 
         self.info_set = info_set
 
@@ -68,18 +69,14 @@ class StarTracker:
         TODO: docstring
         '''
         while True:
-            user_input = input(prompt_message).strip().lower()  # get user's input from prompt message
+            user_input = st.text_input(prompt_message).strip().lower()  # get user's input from prompt message
             
             if user_input == 'yes':
                 return True
             elif user_input == 'no':
                 return False
             else:
-                print("Please enter 'yes' or 'no'.")
-
-    #result = input_boolean_converter("Enter 'yes' or 'no': ")
-    #print("You entered:", result)
-
+                st.write("Please enter 'yes' or 'no'.")
 
     def parameter_value(self):
         '''
@@ -87,7 +84,6 @@ class StarTracker:
         '''
         for value in self.info_set:
             
-            print(value)
             user_input = self.input_boolean_converter(f'Does this text look like it contains the proper information for a certain parameter? : {value}')
             
             if user_input:  # user_input is True if user entered yes
@@ -121,7 +117,7 @@ class StarTracker:
             if self.info_set == []:
                 self.find_word_in_text(word="Accuracy")
                 if self.info_set == []:
-                    print("Accuracy could not be found in the provided text. Proofread the pdf to ensure it has the aperture information. If not, upload a new pdf. If it does, please input manually.")
+                    st.write("Accuracy could not be found in the provided text. Proofread the pdf to ensure it has the aperture information. If not, upload a new pdf. If it does, please input manually.")
             
             self.accuracy = self.parameter_value()
             
@@ -129,7 +125,7 @@ class StarTracker:
             if self.info_set == []:
                 self.find_word_in_text(word="Field of View")
                 if self.info_set == []:
-                    print("Field of view could not be found in the provided text. Proofread the pdf to ensure it has the field of view information. If not, upload a new pdf. If it does, please input manually.")
+                    st.write("Field of view could not be found in the provided text. Proofread the pdf to ensure it has the field of view information. If not, upload a new pdf. If it does, please input manually.")
             
             self.fov = self.parameter_value()
 
@@ -140,7 +136,7 @@ class StarTracker:
             
             for prompt in prompt_messages:
                 while True:
-                    user_input = input(prompt)
+                    user_input = st.text_input(prompt)
                     
                     try:
                         value = float(user_input)  # Try converting input to float
@@ -151,7 +147,7 @@ class StarTracker:
                         break
                     
                     except ValueError:
-                        print("Please enter an integer or float for the value of this parameter, in the units requested.")
+                        st.write("Please enter an integer or float for the value of this parameter, in the units requested.")
             
             self.accuracy, self.fov = values
 

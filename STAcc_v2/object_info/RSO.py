@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime as dt
 import math as m
+import streamlit as st
 
 class RSO:
     def __init__(self, name="Noah", color='red'):
@@ -12,7 +13,7 @@ class RSO:
         self.color = color
 
     def say_hello(self):
-        print(f'Hi, I am your RSO named {self.name}!')
+        st.write(f'Hi, I am your RSO named {self.name}!')
 
     def get_tle(self, username='kylyn.smith@yale.edu', password='kFs29ceil80*!*!', norad_cat_id=[25544, 41335]):
         '''
@@ -27,10 +28,9 @@ class RSO:
         processed_tle = []
         for i in unprocessed_tle:
             processed_tle.append(i+"\n")
-            
-        self.processed_tle = processed_tle
 
-        return self.processed_tle
+        return processed_tle
+
         #In future edits, this function will be expanded to allow for users to edit
         #not only the star tracker's specs but the chosen RSO's too.
         #######################
