@@ -10,10 +10,8 @@ class StarTracker:
             assert (type(datasheet) == str) | (datasheet == None), "Input the filepath to your datasheet; must be a string."
             self.datasheet = datasheet
         except AssertionError as msg:
-            st.write(msg)
-        #try:
-            # check if path to file exists
-            #self.datasheet = 
+            self.datasheet = 'startracker1_datasheet.pdf'
+
 
     def extract_text_from_pdf(self):
         '''
