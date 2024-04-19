@@ -14,6 +14,7 @@ from STAcc_v2.analyze.orbit_visualizer import *
 st.title("STAcc_v2 Beta Test")
 
 # @st.cache_data  # caches the result of the function below, not having to read in the data every time it reloads
+
 STckr_default = StarTracker(datasheet="startracker1_datasheet.pdf")
 STckr_default.set_parameter_values()
 
@@ -40,11 +41,6 @@ if st.checkbox("Get TLE"):
     ax = fig.add_subplot(111,projection='3d')
 
     Object_default.orbit_plotter(ax)
-    cone_plotter(ax)
+    STckr_default.fov_plotter(ax)
 
     st.pyplot(fig)
-
-    #Object_default.orbit_plotter()
-
-
-        #show_plot()

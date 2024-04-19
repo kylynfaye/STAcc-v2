@@ -83,15 +83,18 @@ class RSO:
             ax.plot(x,y,z,zorder=5,color='r')
 
 
-        plt.title("Orbit of this RSO [var_name?] as of "+orb["t"].strftime("%m %Y"))
+        plt.title("Orbit of this RSO as of "+orb["t"].strftime("%m %Y"))
         
         ax.set_xlabel("X-axis (km)")
         ax.set_ylabel("Y-axis (km)")
         ax.set_zlabel("Z-axis (km)")
 
+        ax.set_zlim(-7500,7500)
+        ax.set_ylim(-10000,10000)
+        ax.set_xlim(-10000,10000)
+
         ax.xaxis.set_tick_params(labelsize=7)
         ax.yaxis.set_tick_params(labelsize=7)
         ax.zaxis.set_tick_params(labelsize=7)
-        ax.set_aspect('equal', adjustable='box')
 
         return ax
