@@ -130,7 +130,7 @@ class StarTracker:
             
             self.fov = self.parameter_value()
 
-# is this how to do this without pdf??
+
         if self.datasheet == None:
             #prompt_messages = ["Input the accuracy of your startracker in [units]:", "Input the field of view of your startracker in arcseconds"]
             prompt_messages = ["Input the field of view of your startracker in arcseconds:"]
@@ -156,13 +156,13 @@ class StarTracker:
             self.fov = values
         return self.fov
     
-    def fov_plotter(self, ax, tip_position=(0,0,200), FOV1=0.261799, FOV2=0.314159, height=3000, theta=10, phi=60, psi=0):
+    def fov_plotter(self, ax, tip_position=(0,0,200), height=3000, theta=10, phi=60, psi=0):
         a, b, c = tip_position
         r = 6781
 
         num_points = 50
-        thetap = np.linspace(0, 2*np.pi, num_points)  # Azimuthal angle
-        z = np.linspace(0, height, num_points)  # Height of the cone (decreasing)
+        thetap = np.linspace(0, 2*np.pi, num_points)  # goes around azimuthal angle/z-axis
+        z = np.linspace(0, height, num_points)
 
         T, Z = np.meshgrid(thetap, z)
 
@@ -174,7 +174,7 @@ class StarTracker:
 
         X = majradius * np.cos(T) + a
         Y = minradius * np.sin(T) + b
-        Z = -Z + r + c + height # just orients the cone to start at the north pole
+        Z = -Z + r + c + height  # just orients the cone to start at the north pole
 
         points = np.array([X.flatten(), Y.flatten(), Z.flatten()])
 

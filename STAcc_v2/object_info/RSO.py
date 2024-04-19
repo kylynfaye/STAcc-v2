@@ -6,22 +6,23 @@ import math as m
 import streamlit as st
 
 class RSO:
-    def __init__(self, name="Noah", color='red'):
-        # self.mag = magnitude
-        # self.xpos, self.ypos, self.zpos = x_pos, y_pos, z_pos
-        self.name = name
+    def __init__(self, username, password, color='red'):
+        self.username = username
+        self.password = password
         self.color = color
 
-    def say_hello(self):
+    def say_hello(self, name="Noah"):
+        self.name = name
         st.write(f'Hi, I am your RSO named {self.name}!')
 
-    def get_tle(self, username='kylyn.smith@yale.edu', password='kFs29ceil80*!*!', norad_cat_id=[25544, 41335]):
+    def get_tle(self, norad_cat_id=[25544, 41335]):
         '''
         Uses spacetrack package to query orbit information about any satellite from space-track.org database
         Outputs tle specs in required format for use by other methods within the class
         '''
+        self.id = norad_cat_id
         #id = input("Type the ID of the satellite you would like to track with your star tracker. The default is [25544, 41335].")
-        stc = SpaceTrackClient(username, password)
+        stc = SpaceTrackClient(self.username, self.password)
         tle = stc.tle_latest(norad_cat_id=norad_cat_id, ordinal=1, format='tle')
 
         unprocessed_tle = tle.split("\n")[0:-1]
@@ -35,7 +36,7 @@ class RSO:
         #not only the star tracker's specs but the chosen RSO's too.
         #######################
 
-    def orbit_plotter(self, ax):
+    def orbit_plotter(self, ax, azim=45, elev=45):
         '''
         TODO: write docstring
 
@@ -55,7 +56,7 @@ class RSO:
 
         # first, we add the Earth to the plot:
         u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-        ax.plot_wireframe(r*np.cos(u)*np.sin(v), r*np.sin(u)*np.sin(v), r*np.cos(v), color="b", lw=0.5, zorder=0)
+        ax.plot_wireframe(r*np.cos(u)*np.sin(v), r*np.sin(u)*np.sin(v), r*np.cos(v), color='cornflowerblue', lw=0.5, zorder=0)
         
         # this segment extracts and stores the data found in the satellite's TLE
         for i in range(len(data)//2):
@@ -83,7 +84,7 @@ class RSO:
             ax.plot(x,y,z,zorder=5,color='r')
 
 
-        plt.title("Orbit of this RSO as of "+orb["t"].strftime("%m %Y"))
+        plt.title(f'Orbit of this RSO (ID = {self.id}) as of {orb["t"].strftime("%m %Y")}')
         
         ax.set_xlabel("X-axis (km)")
         ax.set_ylabel("Y-axis (km)")
@@ -92,6 +93,8 @@ class RSO:
         ax.set_zlim(-7500,7500)
         ax.set_ylim(-10000,10000)
         ax.set_xlim(-10000,10000)
+
+        ax.view_init(azim=azim, elev=elev)
 
         ax.xaxis.set_tick_params(labelsize=7)
         ax.yaxis.set_tick_params(labelsize=7)
