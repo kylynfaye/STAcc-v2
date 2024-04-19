@@ -51,7 +51,7 @@ if st.checkbox("Get TLE"):
     ypos = st.slider("Y Position of Star Tracker", 0,100, 0)
     zpos = st.slider("Z Position of Star Tracker", 0,1000, 200)
 
-    reach = st.slider("Height of Star Tracker View Cone", 1000,5000, 3000)
+    reach = st.slider("Height of Star Tracker View Cone", 1000,5000, 1500)
     
     xrot = st.slider("Rotate Star Tracker Around x-Axis (in rad)", 0.0,2*np.pi, 0.0)
     yrot = st.slider("Rotate Star Tracker Around y-Axis (in rad)", 0.0,2*np.pi, 0.0)
