@@ -5,7 +5,7 @@ setuptools.setup(
      version="0.1",
      author="Kylyn Smith",
      author_email="kylyn.smith@yale.edu",
-     description="A star tracker accuracy package",
-     packages=["STAcc_v2","STAcc_v2/object_info", "STAcc_v2/analyze", "STAcc_v2/webapp"]
+     description="A star tracker visualization package",
+     packages=["STAcc_v2","STAcc_v2/object_info", "STAcc_v2/analyze"]
      python_requires='>=3'
 )
