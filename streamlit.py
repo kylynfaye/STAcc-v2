@@ -21,7 +21,6 @@ if st.checkbox("Upload custom star tracker datasheet instead"):
     datasheet = st.file_uploader('Upload the datasheet to your chosen commercial star tracker here, or use the default.', type='pdf', accept_multiple_files=False, label_visibility="visible")
     STckr = StarTracker(datasheet=datasheet)
     STckr.set_parameter_values()
-    st.write(STckr.fov)
 
 
 #@st.cache_data
@@ -47,16 +46,25 @@ if st.checkbox("Get TLE"):
 
     Object_default.orbit_plotter(ax, elev=10)
 
-    xpos = st.slider("X Position of Star Tracker", 0,100, 0)
-    ypos = st.slider("Y Position of Star Tracker", 0,100, 0)
-    zpos = st.slider("Z Position of Star Tracker", 0,1000, 200)
+    xpos = st.sidebar.slider("X Position of Star Tracker", 0,100, 0)
+    ypos = st.sidebar.slider("Y Position of Star Tracker", 0,100, 0)
+    zpos = st.sidebar.slider("Z Position of Star Tracker", 0,1000, 200)
 
-    reach = st.slider("Height of Star Tracker View Cone", 1000,5000, 1500)
+    reach = st.sidebar.slider("Height of Star Tracker View Cone", 1000,5000, 1500)
     
-    xrot = st.slider("Rotate Star Tracker Around x-Axis (in rad)", 0.0,2*np.pi, 0.0)
-    yrot = st.slider("Rotate Star Tracker Around y-Axis (in rad)", 0.0,2*np.pi, 0.0)
-    zrot = st.slider("Rotate Star Tracker Around z-Axis (in rad)", 0.0,2*np.pi, 0.0)
+    xrot = st.sidebar.slider("Rotate Star Tracker Around x-Axis (in rad)", 0.0,2*np.pi, 0.0)
+    yrot = st.sidebar.slider("Rotate Star Tracker Around y-Axis (in rad)", 0.0,2*np.pi, 0.0)
+    zrot = st.sidebar.slider("Rotate Star Tracker Around z-Axis (in rad)", 0.0,2*np.pi, 0.0)
 
-    STckr_default.fov_plotter(ax, tip_position=(xpos, ypos, zpos), height=reach, theta=xrot, phi=yrot, psi=zrot)
+    try:
+        STckr_default == None
+        STckr_default.fov_plotter(ax, tip_position=(xpos, ypos, zpos), height=reach, theta=xrot, phi=yrot, psi=zrot)
+    except NameError:
+        st.write("Not using the default star tracker.")
+    try:
+        STckr == None
+        STckr.fov_plotter(ax, tip_position=(xpos, ypos, zpos), height=reach, theta=xrot, phi=yrot, psi=zrot)
+    except NameError:
+        st.write("Try using the default star tracker.")
 
     st.pyplot(fig)

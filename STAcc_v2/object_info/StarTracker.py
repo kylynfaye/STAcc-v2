@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 class StarTracker:
     def __init__(self, datasheet='startracker1_datasheet.pdf'):
         try:
-            assert (type(datasheet) == str) | (datasheet == None), "Input the filepath to your datasheet; must be a string."
+            assert (type(datasheet) == str) | (str(type(datasheet)) == "<class 'streamlit.runtime.uploaded_file_manager.UploadedFile'>"), "Input the filepath to your datasheet; must be a string."
             self.datasheet = datasheet
         except AssertionError as msg:
             self.datasheet = 'startracker1_datasheet.pdf'
@@ -85,7 +85,16 @@ class StarTracker:
         for value in self.info_set:
             
             st.write(f'Does this text look like it contains the proper information for a certain parameter? : {value}')
-            if st.button('Yes'):  # True if presses yes button
+            
+            if 'clicked' not in st.session_state:
+                st.session_state.clicked = False
+
+            def click_button():
+                st.session_state.clicked = True
+
+            st.button('Yes', on_click=click_button)
+
+            if st.session_state.clicked:
                 float_pattern = r'[-+]?\d*\.\d+|\d+'  # This pattern identifies both integer and floating-point numbers
                 float_values = re.findall(float_pattern, value)
                 
@@ -122,7 +131,7 @@ class StarTracker:
             
             self.find_word_in_text(word="Field of View")
             if self.info_set == []:
-                self.find_word_in_text(word="field of view")
+                self.find_word_in_text(word="Field of view")
                 if self.info_set == []:
                     st.write("Field of view could not be found in the provided text. Proofread the pdf to ensure it has the field of view information. If not, upload a new pdf. If it does, please input manually.")
             
