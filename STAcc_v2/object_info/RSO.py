@@ -100,7 +100,8 @@ class RSO:
         # then, this loops through the parametric orbit and computes the x, y, z positions at each stage
         x,y,z = [],[],[]
         for i in np.linspace(0,2*m.pi,100):
-            P = np.matmul(R,np.array([[orb["a"]*m.cos(i)],[orb["b"]*m.sin(i)],[0]]))-np.matmul(R,np.array([[orb["c"]],[0],[0]]))
+            P = np.matmul(R,np.array([[orb["a"]*m.cos(i)],[orb["b"]*m.sin(i)],[0]]))\
+                -np.matmul(R,np.array([[orb["c"]],[0],[0]]))
             x += [P[0]]
             y += [P[1]]
             z += [P[2]]

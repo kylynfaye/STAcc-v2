@@ -93,8 +93,8 @@ if stckr_option != None:
     zrot = st.sidebar.slider("Rotate Star Tracker Around z-Axis (in rad)", 0.0,2*np.pi, 0.0)
 
     st.sidebar.subheader("Rotate the view of the plot.")
-    azim = st.sidebar.slider("Azimuth", -90,90, 45)
-    elev = st.sidebar.slider("Elevation", -90,90, 10)
+    azim = st.sidebar.slider("Azimuth", 0,90, 45)
+    elev = st.sidebar.slider("Elevation", 0,90, 10)
 
 
 

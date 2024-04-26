@@ -145,7 +145,9 @@ class StarTracker:
             if self.info_set == []:
                 self.find_word_in_text(word="Field of view")
                 if self.info_set == []:
-                    st.write("Field of view could not be found in the provided text. Proofread the pdf to ensure it has the field of view information. If not, upload a new pdf. If it does, please input manually.")
+                    st.write("Field of view could not be found in the provided text. \
+                             Proofread the pdf to ensure it has the field of view information. \
+                             If not, upload a new pdf. If it does, please input manually.")
             
             self.fov = self.parameter_value()
 
