@@ -3,7 +3,7 @@ numpy==1.24.3
 matplotlib==3.7.2
 PyPDF2==3.0.1
 
-spacetrack==0.27.0
+spacetrack==1.2.0
 basemap>=1.0
 
 datetime==5.5
