@@ -2,7 +2,10 @@ streamlit
 numpy
 matplotlib
 PyPDF2
+
 spacetrack
 mpl_toolkits
+
 datetime
 math
+httpx

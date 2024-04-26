@@ -1,21 +1,38 @@
-from PyPDF2 import PdfReader
-import re
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
 
+from PyPDF2 import PdfReader
+import re
+
 class StarTracker:
     def __init__(self, datasheet='startracker1_datasheet.pdf'):
+        '''
+        Initalize a StarTracker object using either the default PDF or one input from the user.
+
+        Args:
+            self
+            datasheet (str): The filepath for your intended star tracker datasheet
+
+        Attributes:
+            self.datasheet = The filepath for your intended star tracker datasheet
+                (forced to be a string or uploaded Streamlit file type, otherwise uses default)
+        '''
         try:
             assert (type(datasheet) == str) | (str(type(datasheet)) == "<class 'streamlit.runtime.uploaded_file_manager.UploadedFile'>"), "Input the filepath to your datasheet; must be a string."
             self.datasheet = datasheet
         except AssertionError as msg:
             self.datasheet = 'startracker1_datasheet.pdf'
 
-
     def extract_text_from_pdf(self):
         '''
-        TODO: write docstring
+        Reads all of the text in the datasheet pdf into one long string of searchable characters.
+        
+        Args:
+            self
+
+        Returns/Attributes:
+            self.datasheet_text (str): A long string of all the pdf text
         '''
         reader = PdfReader(self.datasheet)
         number_of_pages = len(reader.pages)
@@ -30,19 +47,19 @@ class StarTracker:
         self.datasheet_text = pdf_text
 
         return self.datasheet_text
-    
+
     def find_word_in_text(self, word, num_characters=15):
         '''
         Find occurrences of a word in a text, then return the word and a defined number of characters 
         following each occurrence.
 
         Args:
+            self
             word (str): The word to search for in the text
-            text (str): The text in which to search for the word
             num_characters (int): The number of characters to extract after each occurrence of the word
 
-        Returns:
-            info_set (list): A list of extracted substrings, each containing the word and characters following it
+        Returns/Attributes:
+            self.info_set (list): A list of extracted substrings, each containing the word and characters following it
         '''
         info_set = []
         index = 0
@@ -64,27 +81,21 @@ class StarTracker:
 
         return self.info_set
     
-    # def input_boolean_converter(self, prompt_message):
-    #     '''
-    #     TODO: docstring
-    #     '''
-    #     while True:
-    #         user_input = st.text_input(prompt_message).strip().lower()  # get user's input from prompt message
-            
-    #         if user_input == 'yes':
-    #             return True
-    #         elif user_input == 'no':
-    #             return False
-    #         else:
-    #             st.write("Please enter 'yes' or 'no'.")
-
     def parameter_value(self):
         '''
-        TODO: docstring
+        From a given set of strings (it's possible that the datasheet listed the words "field of view" multiple times),
+        extract the field of view using a regular expression pattern and assign to the attribute self.fov.
+        If only one number for the FOV exists, it sets the cone to be circular rather than elliptical.
+        
+        Args:
+            self
+
+        Returns:
+            float_values (list): The integers/floats for field of view of the cone in two distinct directions.
         '''
         for value in self.info_set:
             
-            st.write(f'Does this text look like it contains the proper information for a certain parameter? : {value}')
+            st.write(f"Does this text excerpt look like it contains the star tracker's field of view? : {value}")
             
             if 'clicked' not in st.session_state:
                 st.session_state.clicked = False
@@ -99,24 +110,25 @@ class StarTracker:
                 float_values = re.findall(float_pattern, value)
                 
                 if float_values:
-                #    float_number = float(float_values[0])  # Convert the first matched value to a float
-                    
-                    return float_values  # Return the extracted float number
+                    if len(float_values) == 1:                    
+                        return float_values*2 # assumes the same degree FOV in both directions if only one number given
+                    if len(float_values) == 2:                    
+                        return float_values
             if st.button('No'):   
-                return st.write("No value can be found. Try inputting your specifications manually.")
-
+                st.write("No value can be found. Try using the default tracker.")
+                return None
 
     def set_parameter_values(self):
         '''
         Define the attributes of the StarTracker class instance through detection from the input datasheet
-        or prompt the user to input star tracker parameters.
+        or prompt the user to input star tracker parameters. Basically, this does all of the above functions
+        in one step, reducing the number of calls I have to make in streamlit.
         
         Args:
             self
             
-        Returns: tuple of valid parameter values (integer or floats)
-            self.accuracy: accuracy of star tracker (in [units])
-            self.fov: field of view of star tracker (in arcseconds)
+        Returns:
+            self.fov: field of view of star tracker (in degrees)
         '''
         if self.datasheet:
             self.extract_text_from_pdf()
@@ -157,31 +169,45 @@ class StarTracker:
                     
                     except ValueError:
                         st.write("Please enter an integer or float for the value of this parameter, in the units requested.")
-            
-            #self.accuracy, self.fov = values
-        #return self.accuracy, self.fov
+
             self.fov = values
+
         return self.fov
     
-    def fov_plotter(self, ax, tip_position=(0,0,200), height=3000, theta=10, phi=60, psi=0):
-        a, b, c = tip_position
-        r = 6781
+    def fov_frame(self, tip_position=(0,0,0), height=3000, theta=10, phi=60, psi=0):
+        '''
+        Sets up a meshgrid to define the star tracker's FOV in an oblong cone shape (meaning the cone
+        can have two different dimensions).
 
+        Args:
+            self
+            tip_position (tuple of 3 floats/ints): defines the (x,y,z) positions of the point of the cone/
+                the star tracker's actual location
+            height (float): the distance outwards that the cone reaches/height of the plotted cone
+            theta (float): the rotating angle away from the z axis
+            phi (float): the rotating angle away from the y axis
+            psi (float): the rotating angle away from the x axis
+
+        Returns:
+            Xrot, Yrot, Zrot (meshgrids): the necessary objects with position information to build an ax.plot_wireframe in 3 dimensions
+        '''
+        a, b, c = tip_position
+ 
         num_points = 50
         thetap = np.linspace(0, 2*np.pi, num_points)  # goes around azimuthal angle/z-axis
-        z = np.linspace(0, height, num_points)
+        z = np.linspace(0, height, num_points)  # makes a bunch of z values between 0 and the height
 
         T, Z = np.meshgrid(thetap, z)
 
         major_radius = height*np.tan(float(self.fov[0])/2)
         minor_radius = height*np.tan(float(self.fov[1])/2)
 
-        majradius = major_radius * (1 - Z / height)  # Linearly varying radius
-        minradius = minor_radius * (1 - Z / height)  # Linearly varying radius
+        majradius = major_radius * (1 - Z / height)
+        minradius = minor_radius * (1 - Z / height)  # these both define the maximum size to which the large part of the cone extends
 
         X = majradius * np.cos(T) + a
         Y = minradius * np.sin(T) + b
-        Z = -Z + r + c + height  # just orients the cone to start at the north pole
+        Z = -Z + c + height  # just orients the cone to start at the north pole
 
         points = np.array([X.flatten(), Y.flatten(), Z.flatten()])
 
@@ -195,16 +221,13 @@ class StarTracker:
                             np.sin(phi)*np.cos(theta),
                             np.cos(phi)*np.cos(theta)]])
         
+        # This rotation matrix can be applied to the set of X/Y/Z meshgrid points
+        # in order to rotate the star tracker around Earth as follows:
+
         rotated = np.dot(Euler_Rotation_Matrix, points)
         Xrot = rotated[0].reshape(X.shape)
         Yrot = rotated[1].reshape(Y.shape)
         Zrot = rotated[2].reshape(Z.shape)
 
-        r = 6781
-        u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-        ax.plot_wireframe(r*np.cos(u)*np.sin(v), r*np.sin(u)*np.sin(v), r*np.cos(v), color="b", lw=0.5, zorder=0)
-
-        ax.plot_wireframe(X, Y, Z, edgecolor='teal', alpha=0.3)
-        ax.plot_wireframe(Xrot, Yrot, Zrot, edgecolor='k', alpha=0.3)
-
-        return ax
+        return Xrot, Yrot, Zrot
+    

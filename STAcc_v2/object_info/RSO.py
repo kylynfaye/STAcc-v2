@@ -1,63 +1,86 @@
-from spacetrack import SpaceTrackClient
+from httpx import HTTPStatusError
+import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+
 import datetime as dt
 import math as m
-import streamlit as st
+from spacetrack import SpaceTrackClient
 
 class RSO:
-    def __init__(self, username, password, color='red'):
+    def __init__(self, username, password, name="Noah", color='red', norad_cat_id=25544):
+        '''
+        Initalize a resident space object using either the default ID or one input from the user.
+
+        Args:
+            self
+            username (str): your username for Space-Track.org
+            password (str): your password for Space-Track.org
+            name (str): a fun name for your RSO
+            color (str): a fun color for your RSO's orbit path
+            norad_cat_id (str): a number indicating your RSO's ID in the catalogue
+
+        Attributes:
+            These should be self-explanatory.
+        '''
         self.username = username
         self.password = password
         self.color = color
-
-    def say_hello(self, name="Noah"):
         self.name = name
-        st.write(f'Hi, I am your RSO named {self.name}!')
-
-    def get_tle(self, norad_cat_id=[25544, 41335]):
-        '''
-        Uses spacetrack package to query orbit information about any satellite from space-track.org database
-        Outputs tle specs in required format for use by other methods within the class
-        '''
         self.id = norad_cat_id
-        #id = input("Type the ID of the satellite you would like to track with your star tracker. The default is [25544, 41335].")
-        stc = SpaceTrackClient(self.username, self.password)
-        tle = stc.tle_latest(norad_cat_id=norad_cat_id, ordinal=1, format='tle')
 
+    def get_tle(self):
+        '''
+        Uses spacetrack package to query orbit information about any satellite from space-track.org database.
+        Outputs tle specs in the required format for use by other methods within the class.
+
+        Args:
+            self
+
+        Returns:
+            processed_tle (str): a string with TLE information carefully edited to be utilized
+                by the following functions for plotting (shoutout to Sebastian for help on this)
+        '''
+
+        stc = SpaceTrackClient(self.username, self.password)
+        tle = stc.tle_latest(norad_cat_id=self.id, ordinal=1, format='tle')
         unprocessed_tle = tle.split("\n")[0:-1]
         processed_tle = []
         for i in unprocessed_tle:
             processed_tle.append(i+"\n")
-
+        
         return processed_tle
 
-        #In future edits, this function will be expanded to allow for users to edit
-        #not only the star tracker's specs but the chosen RSO's too.
+        # In future edits, this function can be expanded to allow for users to edit
+        # not only the star tracker's specs but the chosen RSO's TLE to a theoretical one.
         #######################
 
-    def orbit_plotter(self, ax, azim=45, elev=45):
+    def say_hello(self):
         '''
-        TODO: write docstring
+        A cute lil function to greet the user.
+        It also serves to check that input IDs and names are being utilized.
 
+        Args:
+            self
+        '''
+        st.subheader(f'Hi, I am your RSO named {self.name}! My NORAD CAT ID is {self.id}.')
+
+    def orbit_coords(self):
+        '''
         Adapted from https://python.plainenglish.io/plot-satellites-real-time-orbits-with-python-s-matplotlib-3c7ccd737638
         Plots the orbit of a satellite from its TLE information, which must be processed as seen above.
-        Takes in an axis object and plots the Earth, an orbit, and the star tracker onto it.
+
+        Args:
+            self
+
+        Returns:
+            x, y, z (lists): basic position information for the satellite's at each step throughout its orbit
         '''
         data = self.get_tle()
 
-        # values for Earth:
-            # mu is earth’s standard gravitational parameter
-            # r is earth’s radius in km
-            # D is the amount of hours in a sideral day
-        mu = 398600.4418
-        r = 6781
-        D = 24*0.997269
+        mu = 398600.4418  # Earth’s standard gravitational parameter
+        D = 24*0.997269  # amount of hours in a sideral day
 
-        # first, we add the Earth to the plot:
-        u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
-        ax.plot_wireframe(r*np.cos(u)*np.sin(v), r*np.sin(u)*np.sin(v), r*np.cos(v), color='cornflowerblue', lw=0.5, zorder=0)
-        
         # this segment extracts and stores the data found in the satellite's TLE
         for i in range(len(data)//2):
             if data[i*2][0] != "1":
@@ -81,23 +104,7 @@ class RSO:
             x += [P[0]]
             y += [P[1]]
             z += [P[2]]
-            ax.plot(x,y,z,zorder=5,color='r')
 
+        plt.title(f'Orbit of {self.name} (NORAD ID = {self.id}) as of {orb["t"].strftime("%m / %Y")}')
 
-        plt.title(f'Orbit of this RSO (ID = {self.id}) as of {orb["t"].strftime("%m %Y")}')
-        
-        ax.set_xlabel("X-axis (km)")
-        ax.set_ylabel("Y-axis (km)")
-        ax.set_zlabel("Z-axis (km)")
-
-        ax.set_zlim(-7500,7500)
-        ax.set_ylim(-10000,10000)
-        ax.set_xlim(-10000,10000)
-
-        ax.view_init(azim=azim, elev=elev)
-
-        ax.xaxis.set_tick_params(labelsize=7)
-        ax.yaxis.set_tick_params(labelsize=7)
-        ax.zaxis.set_tick_params(labelsize=7)
-
-        return ax
+        return x, y, z
