@@ -10,7 +10,7 @@ from STAcc_v2.analyze.visualizer import *
 st.set_page_config(layout="wide")
 
 st.title("STAcc_v2: a star tracker visualization tool")
-st.header("welcome to STAcc_v2, a fresh new streamlit app intended to showcase the capabilites of commercial off-the-shelf star trackers utilized on-orbit")
+st.header("welcome to STAcc_v2, a fresh new streamlit app intended to showcase the capabilities of commercial off-the-shelf star trackers utilized on-orbit")
 st.write("Loosely inspired by Eliot Aretskin-Hariton's and Aaron J. Swank's Star Tracker ACCuracy tool from their paper titled 'Star Tracker Performance Estimate with IMU' (2015).")
 
 col1, col2 = st.columns(2)
