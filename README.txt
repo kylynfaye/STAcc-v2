@@ -4,9 +4,8 @@ The default star tracker is SolarMEMS Technologies' Star Tracker for Small Satel
 
 Remember to first make an account on Space-Track.org in order to access TLEs.
 
-Visit the deployed streamlit website here:
-Or download the package, navigate to the downloaded folder, and run:
-    streamlit run streamlit.py
+Download the package, navigate to the downloaded folder, and run:
+    `streamlit run streamlit.py`
 in the terminal.
 
 Please contact kylyn.smith@yale.edu for any inquiries!
